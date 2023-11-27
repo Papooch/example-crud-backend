@@ -4,6 +4,9 @@ import { ProjectsController } from './projects/projects.controller';
 import { HttpError } from './common/errors/http-errors';
 import { TasksRepository } from './tasks/tasks.repository';
 import { TasksController } from './tasks/tasks.controller';
+import bodyParser from 'body-parser';
+import { createExpressEndpoints, initServer } from '@ts-rest/express';
+import { contract } from './api/contract';
 
 async function bootstrap() {
     const app = express();
@@ -15,9 +18,17 @@ async function bootstrap() {
     const tasksRepository = new TasksRepository();
     const tasksController = new TasksController(tasksRepository);
 
-    app.use(express.json());
-    app.use('/projects', projectsController.configureRoutes(Router()));
-    app.use('/tasks', tasksController.configureRoutes(Router()));
+    const s = initServer();
+    const router = s.router(contract, {
+        projects: projectsController.router,
+        tasks: tasksController.router,
+    });
+
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.json());
+
+    createExpressEndpoints(contract, router, app);
+
     app.use(((err, req, res, next) => {
         if (err instanceof HttpError) {
             return res.status(err.status).json({
