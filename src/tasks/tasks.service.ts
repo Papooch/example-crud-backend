@@ -20,22 +20,29 @@ export class TasksService {
         { page, limit }: PaginationQuery,
         search: SearchTaskParams,
     ): Promise<WithTotal<Task>> {
-        const where: Prisma.TaskWhereInput = {};
+        const whereConditions: Prisma.TaskWhereInput[] = [];
         if (search.projectId) {
-            where.projectId = search.projectId;
+            whereConditions.push({ projectId: search.projectId });
         }
         if (search.description) {
-            where.description = { contains: search.description };
+            whereConditions.push({
+                description: { contains: search.description },
+            });
         }
         if (search.status) {
-            where.status = search.status;
+            whereConditions.push({ status: search.status });
         }
         if (search.tags) {
             const tags = await this.prisma.tag.findMany({
                 where: { name: { in: search.tags } },
             });
-            where.tags = { some: { tagId: { in: tags.map((tag) => tag.id) } } };
+            for (const tag of tags) {
+                whereConditions.push({
+                    tags: { some: { tagId: tag.id } },
+                });
+            }
         }
+        const where = { AND: whereConditions };
         const total = await this.prisma.task.count({ where });
         const tasks = await this.prisma.task.findMany({
             include: { tags: { include: { tag: true } } },
