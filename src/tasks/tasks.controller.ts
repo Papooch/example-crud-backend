@@ -8,9 +8,12 @@ export class TasksController {
     constructor(private tasksService: TasksService) {}
 
     public router = initServer().router(contract.tasks, {
-        getAllTasks: async () => {
-            const tasks = await this.tasksService.getAll();
-            return OkResponse(tasks);
+        getAllTasks: async ({ query: { page, limit } }) => {
+            const { items, total } = await this.tasksService.getAll({
+                page,
+                limit,
+            });
+            return OkResponse({ page, limit, total, items });
         },
         getTaskById: async ({ params: { id } }) => {
             const task = await this.tasksService.getById(id);
@@ -19,14 +22,20 @@ export class TasksController {
             }
             return OkResponse(task);
         },
-        getTasksByProjectId: async ({ params: { projectId } }) => {
-            const tasks = await this.tasksService.getAllByProjectId(projectId);
-            if (!tasks) {
+        getTasksByProjectId: async ({
+            params: { projectId },
+            query: { page, limit },
+        }) => {
+            const { items, total } = await this.tasksService.getAllByProjectId(
+                projectId,
+                { page, limit },
+            );
+            if (!items) {
                 throw HttpError.NotFound(
                     `Tasks with projectId ${projectId} not found`,
                 );
             }
-            return OkResponse(tasks);
+            return OkResponse({ page, limit, total, items });
         },
         createTask: async ({ body }) => {
             const task = await this.tasksService.create(body);

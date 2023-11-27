@@ -1,6 +1,7 @@
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
 import { CreateProjectSchema, ViewProjectSchema } from './project.dto';
+import { PaginationQuerySchema, paginatedResponseSchema } from './pagination';
 
 const c = initContract();
 
@@ -9,8 +10,9 @@ export const projectsContract = c.router(
         getAllProjects: {
             method: 'GET',
             path: '',
+            query: PaginationQuerySchema,
             responses: {
-                200: z.array(ViewProjectSchema),
+                200: paginatedResponseSchema(ViewProjectSchema),
             },
         },
         getProjectById: {

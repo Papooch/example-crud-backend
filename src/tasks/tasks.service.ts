@@ -6,23 +6,44 @@ import {
 } from '@prisma/client';
 import { Task, TaskCreateParams, TaskStatus } from './task';
 import { RelationError } from '../common/errors/app-errors';
+import {
+    PaginationQuery,
+    WithTotal,
+    getSkipAndTake,
+} from '../common/pagination';
 
 export class TasksService {
     constructor(private prisma: PrismaClient) {}
 
-    public async getAll(): Promise<Task[]> {
+    public async getAll({
+        page,
+        limit,
+    }: PaginationQuery): Promise<WithTotal<Task>> {
+        const total = await this.prisma.task.count();
         const tasks = await this.prisma.task.findMany({
             include: { tags: { include: { tag: true } } },
+            ...getSkipAndTake(page, limit),
         });
-        return tasks.map(this.mapToTask);
+        return {
+            total,
+            items: tasks.map(this.mapToTask),
+        };
     }
 
-    public async getAllByProjectId(projectId: number): Promise<Task[]> {
+    public async getAllByProjectId(
+        projectId: number,
+        { page, limit }: PaginationQuery,
+    ): Promise<WithTotal<Task>> {
+        const total = await this.prisma.task.count({ where: { projectId } });
         const tasks = await this.prisma.task.findMany({
             where: { projectId },
             include: { tags: { include: { tag: true } } },
+            ...getSkipAndTake(page, limit),
         });
-        return tasks.map(this.mapToTask);
+        return {
+            total,
+            items: tasks.map(this.mapToTask),
+        };
     }
 
     public async getById(id: number): Promise<Task | null> {

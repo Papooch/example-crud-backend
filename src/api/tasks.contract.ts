@@ -2,6 +2,7 @@ import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
 import { CreateTaskSchema, ViewTaskSchema } from './task.dto';
 import { TaskStatus } from '../tasks/task';
+import { PaginationQuerySchema, paginatedResponseSchema } from './pagination';
 
 const c = initContract();
 
@@ -10,8 +11,9 @@ export const tasksContract = c.router(
         getAllTasks: {
             method: 'GET',
             path: '',
+            query: PaginationQuerySchema,
             responses: {
-                200: z.array(ViewTaskSchema),
+                200: paginatedResponseSchema(ViewTaskSchema),
             },
         },
         getTaskById: {
@@ -27,11 +29,12 @@ export const tasksContract = c.router(
         getTasksByProjectId: {
             method: 'GET',
             path: '/project/:projectId',
+            query: PaginationQuerySchema,
             pathParams: z.object({
                 projectId: z.coerce.number(),
             }),
             responses: {
-                200: z.array(ViewTaskSchema),
+                200: paginatedResponseSchema(ViewTaskSchema),
             },
         },
         createTask: {
