@@ -99,6 +99,8 @@ Run the development server with:
 yarn dev
 ```
 
+Go to [`localhost:3000/api-doc`](localhost:3000/api-doc) to see the API interactive documentation.
+
 ## Test
 
 There are no tests yet.
