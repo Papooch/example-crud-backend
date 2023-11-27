@@ -1,17 +1,18 @@
 import {
+    Prisma,
     PrismaClient,
-    Task as PrismaTask,
     Tag as PrismaTag,
     TagOnTask as PrismaTagOnTask,
-    Prisma,
+    Task as PrismaTask,
 } from '@prisma/client';
-import { SearchTaskParams, Task, TaskCreateParams, TaskStatus } from './task';
+
 import { RelationError } from '../common/errors/app-errors';
 import {
+    getSkipAndTake,
     PaginationQuery,
     WithTotal,
-    getSkipAndTake,
 } from '../common/pagination';
+import { SearchTaskParams, Task, TaskCreateParams, TaskStatus } from './task';
 
 export class TasksService {
     constructor(private prisma: PrismaClient) {}

@@ -1,4 +1,5 @@
 import { initContract } from '@ts-rest/core';
+
 import { projectsContract } from './projects.contract';
 import { tasksContract } from './tasks.contract';
 

@@ -1,10 +1,11 @@
 import { PrismaClient } from '@prisma/client';
-import { Project, ProjectCreateParams } from './project';
+
 import {
+    getSkipAndTake,
     PaginationQuery,
     WithTotal,
-    getSkipAndTake,
 } from '../common/pagination';
+import { Project, ProjectCreateParams } from './project';
 
 export class ProjectsService {
     constructor(private prisma: PrismaClient) {}
@@ -25,7 +26,6 @@ export class ProjectsService {
     }
 
     public async create(project: ProjectCreateParams): Promise<Project> {
-        console.log(project);
         return await this.prisma.project.create({ data: project });
     }
 

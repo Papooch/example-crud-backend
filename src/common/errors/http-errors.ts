@@ -1,4 +1,4 @@
-import { AppError, RelationError, EntityNotFoundError } from './app-errors';
+import { AppError, EntityNotFoundError,RelationError } from './app-errors';
 
 export class HttpError extends Error {
     constructor(

@@ -1,4 +1,5 @@
 import { initServer } from '@ts-rest/express';
+
 import { contract } from '../api/contract';
 import { CreatedResponse, OkResponse } from '../common/api-responses';
 import { HttpError } from '../common/errors/http-errors';

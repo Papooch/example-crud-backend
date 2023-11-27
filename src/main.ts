@@ -1,16 +1,17 @@
-import express, { ErrorRequestHandler, Router, Express } from 'express';
-import { ProjectsService } from './projects/projects.service';
-import { ProjectsController } from './projects/projects.controller';
-import { HttpError } from './common/errors/http-errors';
-import { TasksService } from './tasks/tasks.service';
-import { TasksController } from './tasks/tasks.controller';
-import bodyParser from 'body-parser';
-import { createExpressEndpoints, initServer } from '@ts-rest/express';
-import { contract } from './api/contract';
 import { PrismaClient } from '@prisma/client';
+import { createExpressEndpoints, initServer } from '@ts-rest/express';
 import { generateOpenApi } from '@ts-rest/open-api';
+import bodyParser from 'body-parser';
+import express, { ErrorRequestHandler, Express } from 'express';
 import * as swaggerUi from 'swagger-ui-express';
+
+import { contract } from './api/contract';
 import { AppError } from './common/errors/app-errors';
+import { HttpError } from './common/errors/http-errors';
+import { ProjectsController } from './projects/projects.controller';
+import { ProjectsService } from './projects/projects.service';
+import { TasksController } from './tasks/tasks.controller';
+import { TasksService } from './tasks/tasks.service';
 
 async function bootstrap() {
     const app = express();
@@ -47,13 +48,13 @@ function resolveDependencies(app: Express) {
 }
 
 function bindErrorHandlers(app: Express) {
-    app.use(((err, req, res, next) => {
+    app.use(((err, _req, _res, next) => {
         if (err instanceof AppError) {
             next(HttpError.fromAppError(err));
         }
         next(HttpError.Internal(err));
     }) as ErrorRequestHandler);
-    app.use(((err: HttpError, req, res, next) => {
+    app.use(((err: HttpError, _req, res, _next) => {
         return res.status(err.status).json({
             status: err.status,
             message: err.message,

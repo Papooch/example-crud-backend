@@ -1,7 +1,8 @@
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
+
+import { paginatedResponseSchema,PaginationQuerySchema } from './pagination';
 import { CreateProjectSchema, ViewProjectSchema } from './project.dto';
-import { PaginationQuerySchema, paginatedResponseSchema } from './pagination';
 
 const c = initContract();
 
