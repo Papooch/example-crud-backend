@@ -12,6 +12,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@anatine/zod-openapi@npm:^1.12.0":
+  version: 1.14.2
+  resolution: "@anatine/zod-openapi@npm:1.14.2"
+  dependencies:
+    ts-deepmerge: "npm:^6.0.3"
+  peerDependencies:
+    openapi3-ts: ^2.0.0 || ^3.0.0
+    zod: ^3.20.0
+  checksum: fbcd26be3528cb884c78fc3a60443ee2c59fd9a21adf93065ba68a653433a339f6200f8ea5453371a95d7cef4150ecbe7d581c45b0ff5bfb45b9d4a7c82c4dff
+  languageName: node
+  linkType: hard
+
 "@esbuild/android-arm64@npm:0.18.20":
   version: 0.18.20
   resolution: "@esbuild/android-arm64@npm:0.18.20"
@@ -357,6 +369,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ts-rest/open-api@npm:^3.30.5":
+  version: 3.30.5
+  resolution: "@ts-rest/open-api@npm:3.30.5"
+  dependencies:
+    "@anatine/zod-openapi": "npm:^1.12.0"
+    openapi3-ts: "npm:^2.0.2"
+  peerDependencies:
+    "@ts-rest/core": 3.30.5
+    zod: ^3.22.3
+  checksum: 44230b4bffa853ca5fc4503df978b47dfc288e28229a39855d73e5b72d50fbe7088821bfdc6279b1006deec7697fc267b9344f8ec6864d621730951075572656
+  languageName: node
+  linkType: hard
+
 "@types/body-parser@npm:*, @types/body-parser@npm:^1":
   version: 1.19.5
   resolution: "@types/body-parser@npm:1.19.5"
@@ -405,7 +430,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:^4":
+"@types/express@npm:*, @types/express@npm:^4":
   version: 4.17.21
   resolution: "@types/express@npm:4.17.21"
   dependencies:
@@ -493,6 +518,16 @@ __metadata:
     "@types/mime": "npm:*"
     "@types/node": "npm:*"
   checksum: 811d1a2f7e74a872195e7a013bcd87a2fb1edf07eaedcb9dcfd20c1eb4bc56ad4ea0d52141c13192c91ccda7c8aeb8a530d8a7e60b9c27f5990d7e62e0fecb03
+  languageName: node
+  linkType: hard
+
+"@types/swagger-ui-express@npm:^4.1.6":
+  version: 4.1.6
+  resolution: "@types/swagger-ui-express@npm:4.1.6"
+  dependencies:
+    "@types/express": "npm:*"
+    "@types/serve-static": "npm:*"
+  checksum: b7d10d04e70a4e35b0b98bed9ecebb51c0c9bddcb56f7132022b6022c58d643b05a7fe97e792cd6dc8d2c5d952ef173922db56137642a74b464d704fc3c8962b
   languageName: node
   linkType: hard
 
@@ -1292,10 +1327,12 @@ __metadata:
     "@prisma/client": "npm:^5.6.0"
     "@ts-rest/core": "npm:^3.30.5"
     "@ts-rest/express": "npm:^3.30.5"
+    "@ts-rest/open-api": "npm:^3.30.5"
     "@types/body-parser": "npm:^1"
     "@types/eslint": "npm:^8"
     "@types/express": "npm:^4"
     "@types/node": "npm:^20.10.0"
+    "@types/swagger-ui-express": "npm:^4.1.6"
     "@typescript-eslint/eslint-plugin": "npm:^6.12.0"
     "@typescript-eslint/parser": "npm:^6.12.0"
     body-parser: "npm:^1.20.2"
@@ -1303,6 +1340,7 @@ __metadata:
     express: "npm:^4.18.2"
     prettier: "npm:^3.1.0"
     prisma: "npm:^5.6.0"
+    swagger-ui-express: "npm:^5.0.0"
     tsx: "npm:^4.5.0"
     typescript: "npm:^5.3.2"
     zod: "npm:^3.22.4"
@@ -2245,6 +2283,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"openapi3-ts@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "openapi3-ts@npm:2.0.2"
+  dependencies:
+    yaml: "npm:^1.10.2"
+  checksum: 2886a85a28d513ef177d069a85293f47e1bb8ba1c9c953f15de064a119f759d6b42b7eb89ed8db0c7d277904fecb65f28a2f4300ebe424f825682b689d2dc810
+  languageName: node
+  linkType: hard
+
 "optionator@npm:^0.9.3":
   version: 0.9.3
   resolution: "optionator@npm:0.9.3"
@@ -2728,6 +2775,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"swagger-ui-dist@npm:>=5.0.0":
+  version: 5.10.3
+  resolution: "swagger-ui-dist@npm:5.10.3"
+  checksum: d613a2122ef4323f0cbeb8387ff19db30728a97a60af2059393cc714d2038651268c60b65b4628dc6f792d7b60c65c699d786085f370d91acdda80dc81e8f7a1
+  languageName: node
+  linkType: hard
+
+"swagger-ui-express@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "swagger-ui-express@npm:5.0.0"
+  dependencies:
+    swagger-ui-dist: "npm:>=5.0.0"
+  peerDependencies:
+    express: ">=4.0.0 || >=5.0.0-beta"
+  checksum: 9f4c1f249cc613d687a80a1d5c60e8acf69145aa7dd573138b19902a7556396b9b2e7262eab69764d7d0ef14ae6f50214e701bd01a18fcf3b7776589d78b1c0b
+  languageName: node
+  linkType: hard
+
 "tar@npm:^6.1.11, tar@npm:^6.1.2":
   version: 6.2.0
   resolution: "tar@npm:6.2.0"
@@ -2771,6 +2836,13 @@ __metadata:
   peerDependencies:
     typescript: ">=4.2.0"
   checksum: 9408338819c3aca2a709f0bc54e3f874227901506cacb1163612a6c8a43df224174feb965a5eafdae16f66fc68fd7bfee8d3275d0fa73fbb8699e03ed26520c9
+  languageName: node
+  linkType: hard
+
+"ts-deepmerge@npm:^6.0.3":
+  version: 6.2.0
+  resolution: "ts-deepmerge@npm:6.2.0"
+  checksum: 35d7faa9acc02eec9c917b9c73af189db923255f4a844dcf3097e9e3ca20dd05e7ea540b102afd6fb378b5f67eda93c46953d2046c0fb9e0c7e69f7c21a43fe0
   languageName: node
   linkType: hard
 
@@ -2946,6 +3018,13 @@ __metadata:
   version: 4.0.0
   resolution: "yallist@npm:4.0.0"
   checksum: 2286b5e8dbfe22204ab66e2ef5cc9bbb1e55dfc873bbe0d568aa943eb255d131890dfd5bf243637273d31119b870f49c18fcde2c6ffbb7a7a092b870dc90625a
+  languageName: node
+  linkType: hard
+
+"yaml@npm:^1.10.2":
+  version: 1.10.2
+  resolution: "yaml@npm:1.10.2"
+  checksum: 5c28b9eb7adc46544f28d9a8d20c5b3cb1215a886609a2fd41f51628d8aaa5878ccd628b755dbcd29f6bb4921bd04ffbc6dcc370689bb96e594e2f9813d2605f
   languageName: node
   linkType: hard
 
