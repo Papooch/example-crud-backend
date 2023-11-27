@@ -1,4 +1,4 @@
-import { AppError, ConflictError, EntityNotFoundError } from './app-errors';
+import { AppError, RelationError, EntityNotFoundError } from './app-errors';
 
 export class HttpError extends Error {
     constructor(
@@ -27,7 +27,7 @@ export class HttpError extends Error {
     static fromAppError(error: AppError) {
         if (error instanceof EntityNotFoundError) {
             return this.NotFound(error.message);
-        } else if (error instanceof ConflictError) {
+        } else if (error instanceof RelationError) {
             return this.Conflict(error.message);
         }
         return this.Internal(error.message);

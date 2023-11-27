@@ -1,11 +1,8 @@
-import { Router, Request, Response, NextFunction } from 'express';
 import { HttpError } from '../common/errors/http-errors';
 import { TasksService } from './tasks.service';
-
 import { initServer } from '@ts-rest/express';
 import { contract } from '../api/contract';
-import { Task } from './task';
-import { ViewTaskDto } from '../api/task.dto';
+import { CreatedResponse, OkResponse } from '../common/api-responses';
 
 export class TasksController {
     constructor(private tasksService: TasksService) {}
@@ -13,34 +10,42 @@ export class TasksController {
     public router = initServer().router(contract.tasks, {
         getAllTasks: async () => {
             const tasks = await this.tasksService.getAll();
-            return {
-                status: 200,
-                body: tasks,
-            };
+            return OkResponse(tasks);
         },
-        getTaskById: async ({ params }) => {
-            const id = params.id;
+        getTaskById: async ({ params: { id } }) => {
             const task = await this.tasksService.getById(id);
             if (!task) {
                 throw HttpError.NotFound(`Task with id ${id} not found`);
             }
-            return {
-                status: 200,
-                body: task,
-            };
+            return OkResponse(task);
         },
-        getTasksByProjectId: async ({ params }) => {
-            const id = params.projectId;
-            const tasks = await this.tasksService.getAllByProjectId(id);
+        getTasksByProjectId: async ({ params: { projectId } }) => {
+            const tasks = await this.tasksService.getAllByProjectId(projectId);
             if (!tasks) {
                 throw HttpError.NotFound(
-                    `Tasks with projectId ${id} not found`,
+                    `Tasks with projectId ${projectId} not found`,
                 );
             }
-            return {
-                status: 200,
-                body: tasks,
-            };
+            return OkResponse(tasks);
+        },
+        createTask: async ({ body }) => {
+            const task = await this.tasksService.create(body);
+            return CreatedResponse(task);
+        },
+        updateTask: async ({ params: { id }, body }) => {
+            const task = await this.tasksService.update(id, body);
+            if (!task) {
+                throw HttpError.NotFound(`Task with id ${id} not found`);
+            }
+            return OkResponse(task);
+        },
+        updateTaskStatus: async ({ params: { id }, body }) => {
+            const status = body.status;
+            const task = await this.tasksService.changeStatus(id, status);
+            if (!task) {
+                throw HttpError.NotFound(`Task with id ${id} not found`);
+            }
+            return OkResponse(task);
         },
     });
 }

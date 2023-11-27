@@ -6,4 +6,4 @@ export class AppError extends Error {
 
 export class EntityNotFoundError extends AppError {}
 
-export class ConflictError extends AppError {}
+export class RelationError extends AppError {}

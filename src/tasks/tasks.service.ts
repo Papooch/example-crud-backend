@@ -4,7 +4,8 @@ import {
     Tag as PrismaTag,
     TagOnTask as PrismaTagOnTask,
 } from '@prisma/client';
-import { Task, TaskStatus } from './task';
+import { Task, TaskCreateParams, TaskStatus } from './task';
+import { RelationError } from '../common/errors/app-errors';
 
 export class TasksService {
     constructor(private prisma: PrismaClient) {}
@@ -21,7 +22,6 @@ export class TasksService {
             where: { projectId },
             include: { tags: { include: { tag: true } } },
         });
-
         return tasks.map(this.mapToTask);
     }
 
@@ -34,6 +34,93 @@ export class TasksService {
             return null;
         }
         return this.mapToTask(task);
+    }
+
+    public async create({
+        tags,
+        ...taskParams
+    }: TaskCreateParams): Promise<Task> {
+        const id = await this.prisma.$transaction(async (tx) => {
+            const createdTask = await tx.task
+                .create({
+                    data: {
+                        ...taskParams,
+                        status: TaskStatus.Open,
+                    },
+                })
+                .catch((err) => {
+                    if (err?.code !== 'P2002') {
+                        throw new RelationError(
+                            `Project with id ${taskParams.projectId} deos not exist.`,
+                        );
+                    }
+                    throw err;
+                });
+            await tx.tag.createMany({
+                data: tags.map((tag) => ({ name: tag })),
+                skipDuplicates: true,
+            });
+            const createdTags = await tx.tag.findMany({
+                where: { name: { in: tags } },
+                select: { id: true },
+            });
+            await tx.tagOnTask.createMany({
+                data: createdTags.map((tag) => ({
+                    tagId: tag.id,
+                    taskId: createdTask.id,
+                })),
+            });
+            return createdTask.id;
+        });
+        return (await this.getById(id)) as Task;
+    }
+
+    public async update(
+        id: number,
+        { tags, description }: Partial<Omit<TaskCreateParams, 'projectId'>>,
+    ) {
+        const existingTask = await this.getById(id);
+        if (!existingTask) {
+            return null;
+        }
+        await this.prisma.$transaction(async (tx) => {
+            const updatedTask = await tx.task.update({
+                where: { id },
+                data: { description },
+            });
+            if (tags && tags.length > 0) {
+                await tx.tag.createMany({
+                    data: tags.map((tag) => ({ name: tag })),
+                    skipDuplicates: true,
+                });
+                const createdTags = await tx.tag.findMany({
+                    where: { name: { in: tags } },
+                    select: { id: true },
+                });
+                await tx.tagOnTask.deleteMany({ where: { taskId: id } });
+                await tx.tagOnTask.createMany({
+                    data: createdTags.map((tag) => ({
+                        tagId: tag.id,
+                        taskId: updatedTask.id,
+                    })),
+                });
+            }
+        });
+        return await this.getById(id);
+    }
+
+    public async changeStatus(id: number, status: TaskStatus) {
+        const existingTask = await this.getById(id);
+        if (!existingTask) {
+            return null;
+        }
+        this.prisma.task.update({
+            where: { id },
+            data: {
+                status,
+            },
+        });
+        return this.getById(id);
     }
 
     private mapToTask(

@@ -10,6 +10,7 @@ import { contract } from './api/contract';
 import { PrismaClient } from '@prisma/client';
 import { generateOpenApi } from '@ts-rest/open-api';
 import * as swaggerUi from 'swagger-ui-express';
+import { AppError } from './common/errors/app-errors';
 
 async function bootstrap() {
     const app = express();
@@ -47,13 +48,14 @@ function resolveDependencies(app: Express) {
 
 function bindErrorHandlers(app: Express) {
     app.use(((err, req, res, next) => {
-        if (err instanceof HttpError) {
-            return res.status(err.status).json({
-                status: err.status,
-                message: err.message,
-            });
+        if (err instanceof AppError) {
+            next(HttpError.fromAppError(err));
         }
-        return res.status(500).json({
+        next(HttpError.Internal(err));
+    }) as ErrorRequestHandler);
+    app.use(((err: HttpError, req, res, next) => {
+        return res.status(err.status).json({
+            status: err.status,
             message: err.message,
         });
     }) as ErrorRequestHandler);

@@ -13,3 +13,6 @@ export interface Task {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface TaskCreateParams
+    extends Omit<Task, 'id' | 'status' | 'createdAt' | 'updatedAt'> {}
