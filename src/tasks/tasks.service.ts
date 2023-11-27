@@ -3,8 +3,9 @@ import {
     Task as PrismaTask,
     Tag as PrismaTag,
     TagOnTask as PrismaTagOnTask,
+    Prisma,
 } from '@prisma/client';
-import { Task, TaskCreateParams, TaskStatus } from './task';
+import { SearchTaskParams, Task, TaskCreateParams, TaskStatus } from './task';
 import { RelationError } from '../common/errors/app-errors';
 import {
     PaginationQuery,
@@ -15,29 +16,30 @@ import {
 export class TasksService {
     constructor(private prisma: PrismaClient) {}
 
-    public async getAll({
-        page,
-        limit,
-    }: PaginationQuery): Promise<WithTotal<Task>> {
-        const total = await this.prisma.task.count();
-        const tasks = await this.prisma.task.findMany({
-            include: { tags: { include: { tag: true } } },
-            ...getSkipAndTake(page, limit),
-        });
-        return {
-            total,
-            items: tasks.map(this.mapToTask),
-        };
-    }
-
-    public async getAllByProjectId(
-        projectId: number,
+    public async search(
         { page, limit }: PaginationQuery,
+        search: SearchTaskParams,
     ): Promise<WithTotal<Task>> {
-        const total = await this.prisma.task.count({ where: { projectId } });
+        const where: Prisma.TaskWhereInput = {};
+        if (search.projectId) {
+            where.projectId = search.projectId;
+        }
+        if (search.description) {
+            where.description = { contains: search.description };
+        }
+        if (search.status) {
+            where.status = search.status;
+        }
+        if (search.tags) {
+            const tags = await this.prisma.tag.findMany({
+                where: { name: { in: search.tags } },
+            });
+            where.tags = { some: { tagId: { in: tags.map((tag) => tag.id) } } };
+        }
+        const total = await this.prisma.task.count({ where });
         const tasks = await this.prisma.task.findMany({
-            where: { projectId },
             include: { tags: { include: { tag: true } } },
+            where,
             ...getSkipAndTake(page, limit),
         });
         return {

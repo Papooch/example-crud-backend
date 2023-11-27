@@ -1,6 +1,6 @@
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
-import { CreateTaskSchema, ViewTaskSchema } from './task.dto';
+import { CreateTaskSchema, SearchTackSchema, ViewTaskSchema } from './task.dto';
 import { TaskStatus } from '../tasks/task';
 import { PaginationQuerySchema, paginatedResponseSchema } from './pagination';
 
@@ -8,10 +8,13 @@ const c = initContract();
 
 export const tasksContract = c.router(
     {
-        getAllTasks: {
+        searchTasks: {
             method: 'GET',
             path: '',
-            query: PaginationQuerySchema,
+            query: z.object({
+                ...SearchTackSchema.shape,
+                ...PaginationQuerySchema.shape,
+            }),
             responses: {
                 200: paginatedResponseSchema(ViewTaskSchema),
             },
@@ -24,17 +27,6 @@ export const tasksContract = c.router(
             }),
             responses: {
                 200: ViewTaskSchema,
-            },
-        },
-        getTasksByProjectId: {
-            method: 'GET',
-            path: '/project/:projectId',
-            query: PaginationQuerySchema,
-            pathParams: z.object({
-                projectId: z.coerce.number(),
-            }),
-            responses: {
-                200: paginatedResponseSchema(ViewTaskSchema),
             },
         },
         createTask: {

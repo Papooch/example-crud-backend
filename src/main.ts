@@ -40,7 +40,7 @@ function resolveDependencies(app: Express) {
         tasks: tasksController.router,
     });
 
-    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
 
     createExpressEndpoints(contract, router, app);

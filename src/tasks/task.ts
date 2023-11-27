@@ -16,3 +16,8 @@ export interface Task {
 
 export interface TaskCreateParams
     extends Omit<Task, 'id' | 'status' | 'createdAt' | 'updatedAt'> {}
+
+export interface SearchTaskParams
+    extends Partial<
+        Pick<Task, 'projectId' | 'description' | 'status' | 'tags'>
+    > {}
