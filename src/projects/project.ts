@@ -5,3 +5,6 @@ export interface Project {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface ProjectCreateParams
+    extends Omit<Project, 'id' | 'createdAt' | 'updatedAt'> {}

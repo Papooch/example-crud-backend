@@ -5,11 +5,11 @@ import { initServer } from '@ts-rest/express';
 import { contract } from '../api/contract';
 
 export class ProjectsController {
-    constructor(private projectsRepository: ProjectsService) {}
+    constructor(private projectService: ProjectsService) {}
 
     public router = initServer().router(contract.projects, {
         getAllProjects: async () => {
-            const projects = await this.projectsRepository.getAll();
+            const projects = await this.projectService.getAll();
             return {
                 status: 200,
                 body: projects,
@@ -17,10 +17,25 @@ export class ProjectsController {
         },
         getProjectById: async ({ params }) => {
             const id = params.id;
-            const project = await this.projectsRepository.getById(id);
+            const project = await this.projectService.getById(id);
             if (!project) {
                 throw HttpError.NotFound(`Project with id ${id} not found`);
             }
+            return {
+                status: 200,
+                body: project,
+            };
+        },
+        createProject: async ({ body }) => {
+            const project = await this.projectService.create(body);
+            return {
+                status: 201,
+                body: project,
+            };
+        },
+        updateProject: async ({ params, body }) => {
+            const id = params.id;
+            const project = await this.projectService.update(id, body);
             return {
                 status: 200,
                 body: project,
