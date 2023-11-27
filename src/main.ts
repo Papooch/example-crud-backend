@@ -1,21 +1,24 @@
 import express, { ErrorRequestHandler, Router } from 'express';
-import { ProjectsRepository } from './projects/projects.repository';
+import { ProjectsService } from './projects/projects.service';
 import { ProjectsController } from './projects/projects.controller';
 import { HttpError } from './common/errors/http-errors';
-import { TasksRepository } from './tasks/tasks.repository';
+import { TasksService } from './tasks/tasks.service';
 import { TasksController } from './tasks/tasks.controller';
 import bodyParser from 'body-parser';
 import { createExpressEndpoints, initServer } from '@ts-rest/express';
 import { contract } from './api/contract';
+import { PrismaClient } from '@prisma/client';
 
 async function bootstrap() {
     const app = express();
     const port = 3000;
 
-    const projectsRepository = new ProjectsRepository();
+    const prisma = new PrismaClient();
+
+    const projectsRepository = new ProjectsService(prisma);
     const projectsController = new ProjectsController(projectsRepository);
 
-    const tasksRepository = new TasksRepository();
+    const tasksRepository = new TasksService(prisma);
     const tasksController = new TasksController(tasksRepository);
 
     const s = initServer();

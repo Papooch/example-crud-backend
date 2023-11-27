@@ -1,5 +1,3 @@
-import { Tag } from './tag';
-
 export enum TaskStatus {
     Open = 'Open',
     InProgress = 'InProgress',
@@ -11,7 +9,7 @@ export interface Task {
     projectId: number;
     description: string;
     status: TaskStatus;
-    tags: Tag[];
+    tags: string[];
     createdAt: Date;
     updatedAt: Date;
 }

@@ -1,15 +1,15 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { ProjectsRepository } from './projects.repository';
+import { ProjectsService } from './projects.service';
 import { HttpError } from '../common/errors/http-errors';
 import { initServer } from '@ts-rest/express';
 import { contract } from '../api/contract';
 
 export class ProjectsController {
-    constructor(private projectsRepository: ProjectsRepository) {}
+    constructor(private projectsRepository: ProjectsService) {}
 
     public router = initServer().router(contract.projects, {
         getAllProjects: async () => {
-            const projects = this.projectsRepository.getAll();
+            const projects = await this.projectsRepository.getAll();
             return {
                 status: 200,
                 body: projects,
@@ -17,7 +17,7 @@ export class ProjectsController {
         },
         getProjectById: async ({ params }) => {
             const id = params.id;
-            const project = this.projectsRepository.getById(id);
+            const project = await this.projectsRepository.getById(id);
             if (!project) {
                 throw HttpError.NotFound(`Project with id ${id} not found`);
             }

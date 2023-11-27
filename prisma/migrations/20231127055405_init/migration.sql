@@ -1,0 +1,38 @@
+-- CreateTable
+CREATE TABLE "Project" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CreateTable
+CREATE TABLE "Task" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "description" TEXT NOT NULL,
+    "status" TEXT NOT NULL,
+    "projectId" INTEGER NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Task_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Tag" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "TagOnTask" (
+    "tagId" INTEGER NOT NULL,
+    "taskId" INTEGER NOT NULL,
+
+    PRIMARY KEY ("tagId", "taskId"),
+    CONSTRAINT "TagOnTask_tagId_fkey" FOREIGN KEY ("tagId") REFERENCES "Tag" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "TagOnTask_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "Task" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Tag_name_key" ON "Tag"("name");

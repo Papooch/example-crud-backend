@@ -8,7 +8,7 @@ export type CreateProjectDto = z.infer<typeof CreateProjectSchema>;
 
 export const ViewProjectSchema = CreateProjectSchema.extend({
     id: z.number(),
-    createdAt: z.date().optional(),
-    updatedAt: z.date().optional(),
+    createdAt: z.date().optional().nullable(),
+    updatedAt: z.date().optional().nullable(),
 });
 export type ViewProjectDto = z.infer<typeof ViewProjectSchema>;

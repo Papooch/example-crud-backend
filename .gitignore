@@ -3,6 +3,8 @@ build
 dist
 tmp
 
+.env
+
 
 # Yarn
 .pnp.*
