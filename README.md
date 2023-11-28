@@ -33,11 +33,15 @@ For more complex queries, I would have used a query builder like `knex` or `kyse
 
 ### Architecture/Design patterns
 
-I chose grouping by feature, while using a layered architecture within each feature. This way, the code is easier to navigate and the dependencies are easier to manage.
+I chose grouping by feature, while using a kind of service/repository architecture within each feature (although the lines are arguably quite blurry given the lack of business logic). This way, the code is easier to navigate and the dependencies are easier to manage.
 
 I also implemented dependency injection (with manual resolution of dependencies in `main.ts`), which allows for easier testing and better separation of concerns.
 
 You can also notice a lot of "duplication" when it comes to entity types - there is one for the Database, the API and the application. This is intentional as is allows for independent evolution of each layer, while only requiring a simple mapping between the layers.
+
+The main challenge was finding a way to manage the tags, as that was the only "complex" part of the application. I chose to use a separate table for the tags and joined them via a join table to form a many-to-many relationship. The other would be to use an array column to store just the tags, but that would make it harder to query and filter for them without proper indexing. This is all abstracted away in the API layer though, so the user only interacts with an array of strings.
+
+The constraint of maximum 100 tags is also enforced in the API layer by not allowing more than 100 tags to be added to a task - updating a task's tags requires sending the entire array of tags - this might be a bit inconvenient, but it's simple and given it's only 100 tags, the performance implications are minimal. The only issue is deletion of "orphaned" tags, which is not addressed here. This could be done by a scheduled job or by a trigger in the database.
 
 ### Testing
 
